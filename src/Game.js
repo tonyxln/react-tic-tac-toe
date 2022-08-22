@@ -8,11 +8,12 @@ export default class Game extends React.Component {
         this.state = {
             history: [
                 {
-                    squares: Array(9).fill(null)
+                    squares: Array(9).fill(null),
+                    turns: 0
                 }
             ],
             stepNumber: 0,
-            xIsNext: true
+            xIsNext: true,
         };
     }  
 
@@ -40,6 +41,7 @@ export default class Game extends React.Component {
         const history = this.state.history.slice(0, this.state.stepNumber + 1);
         const current = history[history.length - 1];
         const squares = current.squares.slice();
+        const turns = current.turns;
         if (this.calculateWinner(squares) || squares[i]) {
             return;
         }
@@ -47,11 +49,13 @@ export default class Game extends React.Component {
         this.setState({
             history: history.concat([
                 {
-                    squares: squares
+                    squares: squares,
+                    turns: turns + 1,
                 }
             ]),
             stepNumber: history.length,
-            xIsNext: !this.state.xIsNext
+            xIsNext: !this.state.xIsNext,
+            
         });
     }
 
@@ -66,7 +70,6 @@ export default class Game extends React.Component {
         const history = this.state.history;
         const current = history[this.state.stepNumber];
         const winner = this.calculateWinner(current.squares);
-
         const moves = history.map((step, move) => {
             const desc = move ?
                 'Go to move #' + move :
@@ -82,7 +85,7 @@ export default class Game extends React.Component {
         if (winner) {
             status = "Winner: " + winner;
         } else {
-            status = "Next player: " + (this.state.xIsNext ? "X" : "O");
+            status = (current.turns === 9) ? "The game is a draw!" : "Next player: " + (this.state.xIsNext ? "X" : "O");
         }
 
         return (
