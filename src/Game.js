@@ -15,7 +15,7 @@ export default class Game extends React.Component {
             stepNumber: 0,
             xIsNext: true,
         };
-    }  
+    }
 
     calculateWinner(squares) {
         const lines = [
@@ -31,7 +31,7 @@ export default class Game extends React.Component {
         for (let i = 0; i < lines.length; i++) {
             const [a, b, c] = lines[i];
             if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-                return squares[a];
+                return [...lines[i], squares[a]];
             }
         }
         return null;
@@ -55,7 +55,7 @@ export default class Game extends React.Component {
             ]),
             stepNumber: history.length,
             xIsNext: !this.state.xIsNext,
-            
+
         });
     }
 
@@ -64,6 +64,20 @@ export default class Game extends React.Component {
             stepNumber: step,
             xIsNext: (step % 2) === 0
         });
+    }
+
+    highlightSquares(winningSquares) {
+        if (winningSquares !== undefined) {
+            for (let i = 0; i < winningSquares.length; i++) {
+                document.getElementById(winningSquares[i]).classList.add("win");
+            }
+        }
+        else {
+            const squares = document.querySelectorAll(".square");
+            for (const square of squares) {
+                square.classList.remove("win");
+            }
+        }
     }
 
     render() {
@@ -83,9 +97,11 @@ export default class Game extends React.Component {
 
         let status;
         if (winner) {
-            status = "Winner: " + winner;
+            status = "Winner: " + winner[3];
+            this.highlightSquares(winner.slice(0, 3));
         } else {
             status = (current.turns === 9) ? "The game is a draw!" : "Next player: " + (this.state.xIsNext ? "X" : "O");
+            this.highlightSquares();
         }
 
         return (
