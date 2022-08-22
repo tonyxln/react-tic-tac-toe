@@ -5,39 +5,36 @@ import './index.css';
 function Square(props) {
     return (
         <button className="square" onClick={props.onClick}>
-            {props.value}
+            {props.value} 
         </button>
     );
 }
 
 class Board extends React.Component {
-    renderSquare(i) {
+    renderSquare(i, rowCount, colCount) {
+        const squareKey = `${rowCount},${colCount}`;
         return (
             <Square
                 value={this.props.squares[i]}
                 onClick={() => this.props.onClick(i)}
+                key={squareKey}
             />
         );
     }
 
     render() {
+        let grid = [];
+        for (let rowCount= 0; rowCount < 3; rowCount++) {
+            let row = [];
+            for (let colCount = 0; colCount < 3; colCount++) {
+                row.push(this.renderSquare((rowCount * 3) + colCount, rowCount, colCount));
+            }
+            grid.push(<div className="board-row" key={rowCount}>{row}</div>);
+        }
+
         return (
             <div>
-                <div className="board-row">
-                    {this.renderSquare(0)}
-                    {this.renderSquare(1)}
-                    {this.renderSquare(2)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(3)}
-                    {this.renderSquare(4)}
-                    {this.renderSquare(5)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(6)}
-                    {this.renderSquare(7)}
-                    {this.renderSquare(8)}
-                </div>
+                {grid}
             </div>
         );
     }
